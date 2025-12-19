@@ -85,5 +85,5 @@ async def test_get_post_with_comments(async_client: AsyncClient, created_post: d
 
 @pytest.mark.anyio
 async def test_getting_missing_post_with_comments(async_client :AsyncClient, created_post, created_comment):
-    response = await async_client.get("/post2")
+    response = await async_client.get("/post/2")
     assert response.status_code == 404
