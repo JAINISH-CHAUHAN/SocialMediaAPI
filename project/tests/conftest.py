@@ -1,10 +1,20 @@
 # project/tests/conftest.py
+
+import os
 from typing import AsyncGenerator, Generator
 import pytest
 from fastapi.testclient import TestClient
 from httpx import AsyncClient, ASGITransport
+
+os.environ["ENV_STATE"] = "test"
+
+from project.database import database
 from project.main import app
-from project.routers.post import comment_table, post_table
+
+
+
+
+
 
 
 @pytest.fixture(scope="session")
@@ -18,13 +28,20 @@ def client() -> Generator:
         yield c
 
 
+
 @pytest.fixture(autouse=True)
-async def db() -> AsyncGenerator:
-    post_table.clear()
-    comment_table.clear()
+async def db(client) -> AsyncGenerator:
+    """Ensure clean state per test"""
+    # Now database is connected (client fixture triggered app lifespan)
+    # Clean before test
+    await database.execute("DELETE FROM comments")
+    await database.execute("DELETE FROM posts")
+    
     yield
-
-
+    
+    # Clean after test
+    await database.execute("DELETE FROM comments")
+    await database.execute("DELETE FROM posts")
 @pytest.fixture()
 async def async_client(client) -> AsyncGenerator:
     transport = ASGITransport(app=app)
