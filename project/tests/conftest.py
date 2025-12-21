@@ -36,12 +36,14 @@ async def db(client) -> AsyncGenerator:
     # Clean before test
     await database.execute("DELETE FROM comments")
     await database.execute("DELETE FROM posts")
+    await database.execute("DELETE FROM users")
     
     yield
     
     # Clean after test
     await database.execute("DELETE FROM comments")
     await database.execute("DELETE FROM posts")
+    await database.execute("DELETE FROM users")
 @pytest.fixture()
 async def async_client(client) -> AsyncGenerator:
     transport = ASGITransport(app=app)
