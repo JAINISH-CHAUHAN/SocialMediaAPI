@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from .routers.post import router as post_router
+from .routers.user import router as user_router
 from .database import database
 
 @asynccontextmanager
@@ -14,6 +15,7 @@ app = FastAPI(lifespan=lifespan)
 # app.include_router(post_router, prefix='/posts')
 
 app.include_router(post_router)
+app.include_router(user_router)
 
 
 
